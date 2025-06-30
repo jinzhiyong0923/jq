@@ -16,13 +16,193 @@
       --aurora-y: 50%;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      /* 初始化 */
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     html {
       scroll-padding-top: 80px;
     }
 
-    body { font-family: var(--font-family); background: url('images/sakura2.jpg') no-repeat center center/cover; color: var(--text-color); height: 100vh; overflow: hidden; cursor: none; }
+    body {
+      font-family: var(--font-family);
+      background: url('images/sakura2.jpg') no-repeat center center/cover;
+      color: var(--text-color);
+      height: 100vh;
+      overflow: hidden;
+      cursor: none;
+    }
+
+    /* --- NEW: Loading Animation Styles from User --- */
+    .loader-wrapper{
+      /* 固定定位 */
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 20000;
+      width: 100%;
+      height: 100%;
+      /* 溢出隐藏 */
+      overflow: hidden;
+      /* 渐变背景 */
+      background: linear-gradient(45deg,rgb(255, 183, 197) 0%,rgb(225, 138, 170) 33%,#b86b82 66%,rgb(255, 183, 197) 100%);
+      background-size: 400%;
+      background-position: 0% 100%;
+      /* 执行背景渐变动画：动画名 时长 加速后减速 无限次播放 */
+      animation: gradient 7.5s ease-in-out infinite;
+      transition: opacity 1s ease-out;
+    }
+    /* 旋转loading的外圈 */
+    .loader{
+      width: 150px;
+      height: 150px;
+      border: 3px solid transparent;
+      border-top-color: #fff;
+      /* 相对定位 居中 */
+      position: relative;
+      left: 50%;
+      top: 50%;
+      margin-left: -75px;
+      margin-top: -75px;
+      z-index: 2;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      /* 执行旋转动画 */
+      animation: spin 1.7s linear infinite;
+    }
+    /* 旋转loading的中圈 */
+    .loader::before{
+      content: "";
+      /* 绝对定位 */
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      bottom: 5px;
+      right: 5px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #fff;
+      /* 执行反向的旋转动画 reverse:反向 */
+      animation: spin 0.6s linear infinite reverse;
+    }
+    /* 旋转loading的内圈 */
+    .loader::after{
+      content: "";
+      /* 绝对定位 */
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      bottom: 15px;
+      right: 15px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #fff;
+      /* 执行旋转动画 */
+      animation: spin 1s linear infinite;
+    }
+    /* logo */
+    .loader img{
+      width: 55%;
+      height: 55%;
+      object-fit: cover;
+      border-radius: 50%;
+      /* 执行反向的旋转动画,时长必须和外圈的动画一致(不让其跟着旋转) */
+      animation: spin 1.7s linear infinite reverse;
+    }
+    .loader-text{
+      width: 50%;
+      max-width: 300px;
+      height: 36px;
+      /* 绝对定位 水平居中 */
+      position: absolute;
+      top: 72%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      /* 防止选取 */
+      user-select: none;
+    }
+    .loader-text div{
+      width: 30px;
+      height: 36px;
+      color: #fff;
+      font-size: 32px;
+      margin: 0 10px;
+      /* 绝对定位 */
+      position: absolute;
+      /* 默认隐藏+旋转180度 */
+      opacity: 0;
+      transform: rotate(180deg);
+      /* 执行文字移动动画 */
+      animation: move 2s linear infinite;
+    }
+    /* 文字下的投影 */
+    .loader-text div::after{
+      content: "";
+      width: 10px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: rgba(255,255,255,0.15);
+      position: absolute;
+      bottom: -40px;
+      left: 50%;
+      margin-left: -5px;
+    }
+    /* 接下来为各个文字设置动画延迟时间 */
+    .loader-text div:nth-child(2){
+      animation-delay: 0.2s;
+    }
+    .loader-text div:nth-child(3){
+      animation-delay: 0.4s;
+    }
+    .loader-text div:nth-child(4){
+      animation-delay: 0.6s;
+    }
+
+    /* 定义动画 */
+    /* 背景渐变动画 */
+    @keyframes gradient {
+      50%{
+        background-position: 100% 0%;
+      }
+    }
+    /* 旋转动画 */
+    @keyframes spin {
+      0%{
+        transform: rotate(0);
+      }
+      100%{
+        transform: rotate(360deg);
+      }
+    }
+    /* 文字移动动画 */
+    @keyframes move {
+      0%{
+        right: 0;
+        opacity: 0;
+      }
+      35%{
+        right: 41%;
+        opacity: 1;
+        transform: rotate(0);
+      }
+      65%{
+        right: 59%;
+        opacity: 1;
+        transform: rotate(0);
+      }
+      100%{
+        right: 100%;
+        transform: rotate(-180deg);
+      }
+    }
+    /* --- END: Loading Animation Styles --- */
+
 
     canvas#sakura-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
 
@@ -99,7 +279,6 @@
     }
     @keyframes text-shine { to { background-position: 200% center; } }
 
-    /* MODIFIED: Interactive Aurora Background */
     .aurora-background {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
       background: radial-gradient(circle at var(--aurora-x) var(--aurora-y), rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 60%);
@@ -142,7 +321,6 @@
 
     .shiny-btn { margin-top: 20px; padding: 12px 30px; background: linear-gradient(45deg, var(--dark-pink), var(--primary-color)); color: white; border: none; border-radius: 50px; box-shadow: 0 5px 15px rgba(225, 138, 170, 0.4); text-decoration: none; font-size: 1em; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-    /* --- PARALLAX FOOTER --- */
     footer {
       position: relative;
       color: white;
@@ -175,9 +353,7 @@
     }
     .social-links a { color: #fff; margin: 0 15px; text-decoration: none; font-size: 1.5em; transition: color 0.3s, transform 0.3s; }
     .social-links a:hover { color: var(--primary-color); transform: scale(1.2); }
-    /* --- END: PARALLAX FOOTER --- */
 
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     .cursor-trail { position: fixed; width: 10px; height: 10px; background: var(--primary-color); border-radius: 50%; pointer-events: none; z-index: 9998; transition: transform 0.1s, opacity 0.2s; opacity: 0.5; }
     .timeline-container { position: relative; max-width: 800px; width: 100%; }
     .timeline-container::after { content: ''; position: absolute; width: 4px; background-color: rgba(255, 255, 255, 0.5); top: 0; bottom: 0; left: 50%; margin-left: -2px; }
@@ -202,6 +378,19 @@
   </style>
 </head>
 <body>
+
+<div class="loader-wrapper">
+  <div class="loader">
+    <img src="images/微信图片_20250606214237.jpg" alt="胡佳琴 头像">
+  </div>
+  <div class="loader-text">
+    <div>樱</div>
+    <div>落</div>
+    <div>漫</div>
+    <div>境</div>
+  </div>
+</div>
+
 <canvas id="sakura-canvas"></canvas>
 <div class="cursor-trail"></div><div class="cursor-trail"></div><div class="cursor-trail"></div><div class="cursor-trail"></div><div class="cursor-trail"></div>
 
@@ -368,13 +557,48 @@
 
   // --- 3. 页面交互JS ---
   document.addEventListener('DOMContentLoaded', () => {
+    // --- NEW: Loading Animation Logic ---
+    const loaderWrapper = document.querySelector('.loader-wrapper');
+    const nav = document.querySelector('nav');
     const mainContainer = document.getElementById('main-container');
+
+    // Hide main content initially
+    nav.style.opacity = '0';
+    nav.style.visibility = 'hidden';
+    mainContainer.style.opacity = '0';
+    mainContainer.style.visibility = 'hidden';
+
+    // Set timeout to hide loader
+    setTimeout(() => {
+      // Start fading out loader
+      loaderWrapper.style.opacity = '0';
+
+      // After fade out transition ends, hide it and show main content
+      loaderWrapper.addEventListener('transitionend', () => {
+        loaderWrapper.style.display = 'none';
+
+        // Make main content visible and fade it in
+        nav.style.visibility = 'visible';
+        mainContainer.style.visibility = 'visible';
+        nav.style.transition = 'opacity 1s ease-in';
+        mainContainer.style.transition = 'opacity 1s ease-in';
+        nav.style.opacity = '1';
+        mainContainer.style.opacity = '1';
+
+        // Now, trigger the hero text animation
+        animateHeroText('hero-title', '胡佳琴');
+        animateHeroText('hero-subtitle', '声动人心，影藏美好');
+
+      }, { once: true }); // Ensure the event listener runs only once
+
+    }, 5000); // Display loader for 5 seconds
+
+    // --- Original Script Starts Here ---
     const healingVoiceAudios = [ 'audio/1.mp3', 'audio/2.mp3', 'audio/3.mp3', 'audio/4.mp3' ];
     const photoCollageImages = ['images/1.png', 'images/2.png', 'images/3.png', 'images/4.png', 'images/5.png', 'images/6.png', 'images/7.png', 'images/8.png'];
     const randomVideos = [ { src: 'video/WeChat_20250606212206.mp4', ratio: '9/16' }, { src: 'video/2.mp4', ratio: '720/1290' }, { src: 'video/3.mp4', ratio: '648/576' } ];
     const uiSounds = { pop: new Audio('sounds/pop.mp3'), swoosh: new Audio('sounds/swoosh.mp3'), vinyl_start: new Audio('sounds/vinyl_start.mp3'), vinyl_end: new Audio('sounds/vinyl_end.mp3'), };
 
-    // --- Magnetic Items Effect ---
     const magneticItems = document.querySelectorAll('.magnetic-item');
     if (window.matchMedia("(pointer: fine)").matches) {
       magneticItems.forEach(item => {
@@ -390,7 +614,6 @@
       });
     }
 
-    // --- Interactive Aurora & Scroll Effects ---
     const sections = document.querySelectorAll('.section');
     sections.forEach(section => {
       section.addEventListener('mousemove', e => {
@@ -403,19 +626,16 @@
     });
 
     const footer = document.getElementById('footer');
-    const footerLayers = footer.querySelectorAll('.footer-layer');
     mainContainer.addEventListener('scroll', () => {
       const scrollY = mainContainer.scrollTop;
       const scrollHeight = mainContainer.scrollHeight - mainContainer.clientHeight;
 
-      // Parallax Footer
       if (scrollY > scrollHeight - footer.offsetHeight - 200) {
         const relativeScroll = scrollY - (scrollHeight - footer.offsetHeight);
         document.querySelector('.layer-1').style.transform = `translateY(${relativeScroll * 0.1}px)`;
         document.querySelector('.layer-2').style.transform = `translateY(${relativeScroll * 0.2}px)`;
       }
 
-      // Section Title Rotation
       document.querySelectorAll('.section-title').forEach(title => {
         const rect = title.getBoundingClientRect();
         if(rect.top < window.innerHeight && rect.bottom > 0) {
@@ -425,16 +645,12 @@
       });
     });
 
-    // --- Hero Text Animation ---
-    function animateHeroText(elementId, text, delay = 0) {
+    function animateHeroText(elementId, text) {
       const element = document.getElementById(elementId);
       if (!element) return;
       element.innerHTML = text.split('').map(letter => `<span class="hero-letter">${letter === ' ' ? '&nbsp;' : letter}</span>`).join('');
     }
-    animateHeroText('hero-title', '胡佳琴');
-    animateHeroText('hero-subtitle', '声动人心，影藏美好');
 
-    // --- Other Interactive Elements ---
     const vinylPlayer = document.getElementById('vinyl-player');
     const vinylPlayBtn = document.getElementById('vinyl-play-btn');
     const music = new Audio('audio/aa1h9-k7x6n.mp3');
@@ -487,17 +703,19 @@
     const mainVideoPlayer = document.getElementById('main-video-player');
     const phoneMockup = videoModal.querySelector('.phone-mockup');
     let lastVideoIndex = -1;
-    randomVideoCard.addEventListener('click', () => {
-      uiSounds.pop.play().catch(e => {});
-      if (randomVideos.length > 0) {
-        let randomIndex; do { randomIndex = Math.floor(Math.random() * randomVideos.length); } while (randomVideos.length > 1 && randomIndex === lastVideoIndex);
-        lastVideoIndex = randomIndex; const video = randomVideos[randomIndex];
-        phoneMockup.style.aspectRatio = video.ratio; mainVideoPlayer.src = video.src;
-        mainVideoPlayer.play(); videoModal.classList.add('visible');
-      }
-    });
+    if(randomVideoCard){
+      randomVideoCard.addEventListener('click', () => {
+        uiSounds.pop.play().catch(e => {});
+        if (randomVideos.length > 0) {
+          let randomIndex; do { randomIndex = Math.floor(Math.random() * randomVideos.length); } while (randomVideos.length > 1 && randomIndex === lastVideoIndex);
+          lastVideoIndex = randomIndex; const video = randomVideos[randomIndex];
+          phoneMockup.style.aspectRatio = video.ratio; mainVideoPlayer.src = video.src;
+          mainVideoPlayer.play(); videoModal.classList.add('visible');
+        }
+      });
+    }
     function hideVideoModal() { videoModal.classList.remove('visible'); mainVideoPlayer.pause(); }
-    videoCloseBtn.addEventListener('click', hideVideoModal);
+    if(videoCloseBtn) videoCloseBtn.addEventListener('click', hideVideoModal);
 
     let globalAudio = new Audio(); let currentPlayBtn = null; let lastAudioIndex = -1;
     document.querySelectorAll('button[data-type="random-healing"]').forEach(btn => {
